@@ -6,8 +6,14 @@ name = "pypi"
 [packages]
 fastapi = "~=0.115.0"
 uvicorn = "~=0.34.0"
+sqlalchemy = "*"
+aiosqlite = "*"
+httpx = "*"
+alembic = "*"
 
 [dev-packages]
+pytest-mock = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.9"
