@@ -1,4 +1,3 @@
-# модели для мест
 from enum import Enum
 from pydantic import BaseModel
 from typing import List, Optional
@@ -11,7 +10,7 @@ class CategoryEnum(str, Enum):
     attraction = "16000"  # Arts & Entertainment (достопримечательности)
 
     def __str__(self):
-        """Переопределяем строковое представление, чтобы Swagger отображал названия."""
+        """Переопределяем строковое представление, чтобы Swager отображал названия."""
         descriptions = {
             "13065": "Еда (Рестораны)",
             "10032": "Развлечения",

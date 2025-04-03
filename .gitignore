@@ -1,6 +1,8 @@
 /tests/
 
-/alembic/
+# Alembic
+/alembic.ini
+/place_service/migration/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -32,13 +34,12 @@ staticfiles/
 # Ignore the entire virtual environment folder
 venv/
 env/
+.venv
 
 # PyCharm specific
 .idea/
 *.iml
 
-# Migrations (if you want to regenerate them during development, uncomment)
-# **/migrations/
 
 # Coverage reports
 htmlcov/

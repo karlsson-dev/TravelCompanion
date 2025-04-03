@@ -1,4 +1,3 @@
-# # Логика взаимодействия с API Foursquare
 import requests, os
 from dotenv import load_dotenv
 
