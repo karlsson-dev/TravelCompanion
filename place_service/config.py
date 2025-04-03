@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -9,13 +10,14 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASSWORD: str
     model_config = SettingsConfigDict(
-        env_file = Path(__file__).resolve().parent.parent / ".env"
+        env_file = Path(__file__).resolve().parent.parent / ".env",
+        extra="ignore"  # Игнорировать pydantic неизвестные поля
     )
 
 
 settings = Settings()
 
 
-def get_db_url():
+def get_db():
     return (f"postgresql+asyncpg://{settings.DB_USER}:{settings.DB_PASSWORD}@"
             f"{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}")

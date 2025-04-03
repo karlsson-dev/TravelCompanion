@@ -1,33 +1,35 @@
-import sqlite3
-from typing import Optional
+from datetime import datetime
+from typing import Annotated
 
-DB_PATH = "places.db"
+from sqlalchemy import func
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
+from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
 
-def create_table():
-    """Создает таблицу, если её нет"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS places (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        address TEXT,
-        category TEXT,
-        rating REAL,
-        latitude REAL,
-        longitude REAL
-    )
-    ''')
-    conn.commit()
-    conn.close()
+from place_service.config import get_db
 
-def save_place(name: str, address: str, category: str, rating: Optional[float], latitude: float, longitude: float):
-    """Сохраняет место в базе данных"""
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute('''
-    INSERT INTO places (name, address, category, rating, latitude, longitude)
-    VALUES (?, ?, ?, ?, ?, ?)
-    ''', (name, address, category, rating, latitude, longitude))
-    conn.commit()
-    conn.close()
+DATABASE = get_db()
+
+engine = create_async_engine(DATABASE)
+async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+
+# кастомные шаблоны для описания колонок в SQLAlchemy
+int_pk = Annotated[int, mapped_column(primary_key=True)]
+created_at = Annotated[datetime, mapped_column(server_default=func.now())]
+updated_at = Annotated[datetime, mapped_column(server_default=func.now(), onupdate=datetime.now)]
+str_uniq = Annotated[str, mapped_column(unique=True, nullable=False)]
+str_null_true = Annotated[str, mapped_column(nullable=True)]
+
+
+class Base(AsyncAttrs, DeclarativeBase):
+    __abstract__ = True
+
+    @declared_attr.directive
+    def __tablename__(cls) -> str:
+        """
+        Автоматическое преобразование имени класса в имя таблицы.
+        Пример: User -> users, BlogPost -> blogposts
+        """
+        return f"{cls.__name__.lower()}s"
+
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
