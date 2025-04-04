@@ -47,7 +47,7 @@ async def search_places_handler(
             "limit": 10
         }
 
-        data = search_places(params=params)
+        data = await search_places(params=params)
         if not data.get("results"):
             return PlaceResponse(places=[])
 
