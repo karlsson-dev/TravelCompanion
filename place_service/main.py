@@ -8,7 +8,8 @@ from sqlalchemy.future import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
 
-from place_service.apis.foursquare_api import search_places, foursquare_category_id
+from place_service.apis.foursquare_api import search_places, foursquare_category_id, parse_place_item, \
+    prepare_new_ratings
 from place_service.database import async_session_maker
 from place_service.places.models import CategoryEnum, Place, PlaceSchema, PlaceResponse, Rating
 
@@ -37,73 +38,61 @@ async def search_places_handler(
     category_id = foursquare_category_id(category)
 
     if not category_id:
-        raise HTTPException(status_code=400, detail="Invalid category")
+        raise HTTPException(status_code=400, detail="Неверная категория для поиска")
+
+    params = {
+        "ll": f"{latitude},{longitude}",
+        "radius": radius,
+        "categories": category_id,
+        "limit": 10
+    }
 
     try:
-        params = {
-            "ll": f"{latitude},{longitude}",
-            "radius": radius,
-            "categories": category_id,
-            "limit": 10
-        }
-
         data = await search_places(params=params)
-        if not data.get("results"):
+        results = data.get("results", [])
+        if not results:
             return PlaceResponse(places=[])
 
-        places = []
-        new_places = []
-        new_ratings = []
         external_ids = [item.get("fsq_id") for item in data["results"] if item.get("fsq_id")]
-
         existing_places_query = await db.execute(select(Place).where(Place.external_id.in_(external_ids)))
         existing_places = {place.external_id: place for place in existing_places_query.scalars()}
 
-        for item in data["results"]:
-            name = item.get("name")
-            geocode = item.get("geocodes", {}).get("main")
-            address = item.get("location", {}).get("formatted_address", "")
-            rating = item.get("rating")
-            external_id = item.get("fsq_id")
+        places = []
+        new_places = []
+        ratings_buffer = []
 
-            if min_rating is not None and (rating is None or rating < min_rating):
+        for item in results:
+            place_data = parse_place_item(item, min_rating)
+            if not place_data:
                 continue
 
-            if name and geocode:
-                if external_id in existing_places:
-                    places.append(existing_places[external_id])
-                else:
-                    new_places.append({
-                        "name": name,
-                        "latitude": geocode["latitude"],
-                        "longitude": geocode["longitude"],
-                        "address": address,
-                        "external_id": external_id,
-                        "created_at": datetime.now(timezone.utc).replace(tzinfo=None),
-                        "updated_at": datetime.now(timezone.utc).replace(tzinfo=None),
+            if place_data["external_id"] in existing_places:
+                places.append(existing_places[place_data["external_id"]])
+            else:
+                place_data["created_at"] = datetime.now(timezone.utc).replace(tzinfo=None)
+                place_data["updated_at"] = datetime.now(timezone.utc).replace(tzinfo=None)
+                new_places.append(place_data)
+
+                if place_data.get("rating") is not None:
+                    ratings_buffer.append({
+                        "source": "Foursquare",
+                        "rating": place_data["rating"],
+                        "external_id": place_data["external_id"],
                     })
+
 
         if new_places:
             stmt = insert(Place).values(new_places).returning(Place.id, Place.external_id)
             result = await db.execute(stmt)
             inserted_places = {row.external_id: row.id for row in result.mappings()}
 
-            for item in data["results"]:
-                external_id = item.get("fsq_id")
-                rating = item.get("rating")
-                if external_id in inserted_places and rating is not None:
-                    new_ratings.append({
-                        "source": "Foursquare",
-                        "rating": rating,
-                        "place_id": inserted_places[external_id]
-                    })
-
             for place in new_places:
-                place["id"] = inserted_places[place["external_id"]]
+                place["id"] = inserted_places.get(place["external_id"])
                 places.append(Place(**place))
 
-        if new_ratings:
-            await db.execute(insert(Rating).values(new_ratings))
+            rating_values = prepare_new_ratings(ratings_buffer, inserted_places)
+            if rating_values:
+                await db.execute(insert(Rating).values(rating_values))
 
         await db.commit()
 
@@ -111,7 +100,7 @@ async def search_places_handler(
 
     except SQLAlchemyError as e:
         await db.rollback()
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Ошибка базы данных: {str(e)}")
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Непредвиденная ошибка: {str(e)}")

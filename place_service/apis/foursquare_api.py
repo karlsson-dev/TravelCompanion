@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
 import httpx
 from dotenv import load_dotenv
@@ -14,7 +14,6 @@ load_dotenv()
 FOURSQUARE_API_KEY = os.getenv("FOURSQUARE_API_KEY")
 FOURSQUARE_INTEGRATION_URL = os.getenv("FOURSQUARE_URL")
 
-DEFAULT_TIMEOUT = (3, 10)  # 3s на соединение, 10s на чтение
 HEADERS = {
     "Authorization": FOURSQUARE_API_KEY,
     "Accept": "application/json"
@@ -28,12 +27,6 @@ _CODE_MAPPING = {
     "Arts & Entertainment": "16000",
 }
 
-
-def foursquare_category_id(category):
-    """Возвращает ID категории Foursquare API для данного значения"""
-    return _CODE_MAPPING[category]
-
-
 PRODUCTION_TIMEOUTS = {
     "connect": 3.0,  # Таймаут на установку соединения
     "read": 10.0,  # Таймаут на чтение ответа
@@ -45,6 +38,11 @@ CONNECTION_LIMITS = httpx.Limits(
     max_connections=100,  # Общий лимит соединений
     max_keepalive_connections=20  # Долгоживущие соединения
 )
+
+
+def foursquare_category_id(category):
+    """Возвращает ID категории Foursquare API для данного значения"""
+    return _CODE_MAPPING[category]
 
 
 async def search_places(params: Dict[str, Any]) -> Dict[str, Any]:
@@ -112,3 +110,36 @@ async def search_places(params: Dict[str, Any]) -> Dict[str, Any]:
                 detail="Internal server error"
             )
 
+def parse_place_item(item: Dict[str, Any], min_rating: Optional[float]) -> Optional[Dict[str, Any]]:
+    """Извлечь данные о месте, если оно соответствует требованиям"""
+    external_id = item.get("fsq_id")
+    name = item.get("name")
+    geocode = item.get("geocodes", {}).get("main", {})
+    address = item.get("location", {}).get("formatted_address", "")
+    rating = item.get("rating")
+
+    if not (external_id and name and geocode):
+        return None
+
+    if min_rating is not None and (rating is None or rating < min_rating):
+        return None
+
+    return {
+        "external_id": external_id,
+        "name": name,
+        "latitude": geocode.get("latitude"),
+        "longitude": geocode.get("longitude"),
+        "address": address
+    }
+
+
+def prepare_new_ratings(ratings_buffer, inserted_places) -> list[Dict[str, Any]]:
+    """Подготовить список новых рейтингов, соответствующих вставленным местам"""
+    return [
+        {
+            "source": r["source"],
+            "rating": r["rating"],
+            "place_id": inserted_places[r["external_id"]],
+        }
+        for r in ratings_buffer if r["external_id"] in inserted_places
+    ]
