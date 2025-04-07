@@ -27,6 +27,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         finally:
             await session.close()
 
+
 @app.get("/search", response_model=PlaceResponse)
 async def search_places_handler(
         category: CategoryEnum = Query(..., description="Категория мест"),
@@ -41,12 +42,9 @@ async def search_places_handler(
         raise HTTPException(status_code=400, detail="Неверная категория для поиска")
 
     try:
-        # 🔍 Сначала ищем в локальной базе
         local_places = await get_local_places(db, latitude, longitude, radius, category.value, min_rating)
         if local_places:
             return PlaceResponse(places=[PlaceSchema.model_validate(p) for p in local_places])
-
-        places = []
 
         # Если не нашли — обращаемся к внешнему API
         params = {
@@ -64,6 +62,7 @@ async def search_places_handler(
         existing_places_query = await db.execute(select(Place).where(Place.external_id.in_(external_ids)))
         existing_places = {place.external_id: place for place in existing_places_query.scalars()}
 
+        places = []
         new_places = []
         ratings_buffer = []
 
