@@ -1,3 +1,9 @@
+/tests/
+
+# Alembic
+/alembic.ini
+/place_service/migration/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -6,14 +12,9 @@ __pycache__/
 # C extensions
 *.so
 
-# Django stuff:
-*.log
-*.pot
-*.pyc
-*.pyo
-*.pyd
-*.sqlite3
-db.sqlite3
+# Database files
+*.db
+place_service/places.db
 
 # If using PostgreSQL, ignore database dumps
 *.pg_dump
@@ -28,13 +29,12 @@ staticfiles/
 # Ignore the entire virtual environment folder
 venv/
 env/
+.venv
 
 # PyCharm specific
 .idea/
 *.iml
 
-# Migrations (if you want to regenerate them during development, uncomment)
-# **/migrations/
 
 # Coverage reports
 htmlcov/
@@ -61,9 +61,6 @@ dmypy.json
 celerybeat-schedule
 celerybeat.pid
 
-# Django extensions
-*.seed
-*.key
 
 # Backup files
 *.bak
@@ -79,10 +76,6 @@ celerybeat.pid
 # Thumbnails
 ._*
 
-# Windows files
-Thumbs.db
-ehthumbs.db
-Desktop.ini
 
 # Idea files from JetBrains
 .idea/
