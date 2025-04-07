@@ -2,10 +2,10 @@ from enum import Enum
 from typing import List, Optional
 
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import ForeignKey, Text, String, Numeric
+from sqlalchemy import ForeignKey, Text, String, Numeric, Index
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from place_service.database import Base, str_uniq, int_pk, str_null_true
+from place_service.database import Base, int_pk, str_null_true
 
 
 class CategoryEnum(str, Enum):
@@ -22,9 +22,15 @@ class Place(Base):
     latitude: Mapped[float]
     longitude: Mapped[float]
     address: Mapped[str] = mapped_column(Text, nullable=False)
+    category: Mapped[str] = mapped_column(String, nullable=False)
     external_id: Mapped[str_null_true]  # ID из внешнего API
     ratings: Mapped[List["Rating"]] = relationship("Rating", back_populates="place")
     reviews: Mapped[List["Review"]] = relationship("Review", back_populates="place")
+
+    __table_args__ = (
+        Index("idx_latitude", "latitude"),
+        Index("idx_longitude", "longitude"),
+    )
 
     def __str__(self):
         return (f"Место: {self.name}\n"
@@ -48,6 +54,7 @@ class PlaceSchema(BaseModel):
     longitude: float
     address: str
     external_id: Optional[str]
+    category: CategoryEnum
 
     model_config = ConfigDict(from_attributes=True)  # для конвертации SQLAlchemy → Pydantic
 
@@ -76,7 +83,7 @@ class Rating(Base):
 
 class Review(Base):
     id: Mapped[int_pk]
-    source: Mapped[str_uniq]  # Название API (Foursquare, 2GIS и т. д.)
+    source: Mapped[str] = mapped_column(String(50), unique=False)  # Название API (Foursquare, 2GIS и т. д.)
     text: Mapped[str] = mapped_column(Text, nullable=False)
 
     place_id: Mapped[int] = mapped_column(

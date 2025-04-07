@@ -12,8 +12,10 @@ from place_service.apis.foursquare_api import search_places, foursquare_category
     prepare_new_ratings
 from place_service.database import async_session_maker
 from place_service.places.models import CategoryEnum, Place, PlaceSchema, PlaceResponse, Rating
+from place_service.utils import get_local_places
 
 app = FastAPI()
+
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with async_session_maker() as session:
@@ -27,37 +29,41 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
 
 @app.get("/search", response_model=PlaceResponse)
 async def search_places_handler(
-    category: CategoryEnum = Query(..., description="Категория мест"),
-    latitude: float = Query(..., description="Широта"),
-    longitude: float = Query(..., description="Долгота"),
-    radius: int = Query(1000, description="Радиус поиска в метрах"),
-    min_rating: Optional[float] = Query(None, description="Минимальный рейтинг (0-10)"),
-    db: AsyncSession = Depends(get_db)
+        category: CategoryEnum = Query(..., description="Категория мест"),
+        latitude: float = Query(..., description="Широта"),
+        longitude: float = Query(..., description="Долгота"),
+        radius: int = Query(1000, description="Радиус поиска в метрах"),
+        min_rating: Optional[float] = Query(None, description="Минимальный рейтинг (0-10)"),
+        db: AsyncSession = Depends(get_db)
 ):
-
     category_id = foursquare_category_id(category)
-
     if not category_id:
         raise HTTPException(status_code=400, detail="Неверная категория для поиска")
 
-    params = {
-        "ll": f"{latitude},{longitude}",
-        "radius": radius,
-        "categories": category_id,
-        "limit": 10
-    }
-
     try:
+        # 🔍 Сначала ищем в локальной базе
+        local_places = await get_local_places(db, latitude, longitude, radius, category.value, min_rating)
+        if local_places:
+            return PlaceResponse(places=[PlaceSchema.model_validate(p) for p in local_places])
+
+        places = []
+
+        # Если не нашли — обращаемся к внешнему API
+        params = {
+            "ll": f"{latitude},{longitude}",
+            "radius": radius,
+            "categories": category_id,
+            "limit": 10
+        }
         data = await search_places(params=params)
         results = data.get("results", [])
         if not results:
             return PlaceResponse(places=[])
 
-        external_ids = [item.get("fsq_id") for item in data["results"] if item.get("fsq_id")]
+        external_ids = [item.get("fsq_id") for item in results if item.get("fsq_id")]
         existing_places_query = await db.execute(select(Place).where(Place.external_id.in_(external_ids)))
         existing_places = {place.external_id: place for place in existing_places_query.scalars()}
 
-        places = []
         new_places = []
         ratings_buffer = []
 
@@ -66,20 +72,22 @@ async def search_places_handler(
             if not place_data:
                 continue
 
-            if place_data["external_id"] in existing_places:
-                places.append(existing_places[place_data["external_id"]])
+            ext_id = place_data["external_id"]
+            if ext_id in existing_places:
+                places.append(existing_places[ext_id])
             else:
-                place_data["created_at"] = datetime.now(timezone.utc).replace(tzinfo=None)
-                place_data["updated_at"] = datetime.now(timezone.utc).replace(tzinfo=None)
+                now = datetime.now(timezone.utc).replace(tzinfo=None)
+                place_data["created_at"] = now
+                place_data["updated_at"] = now
+                place_data["category"] = category.value  # <-- добавляем категорию
                 new_places.append(place_data)
 
                 if place_data.get("rating") is not None:
                     ratings_buffer.append({
                         "source": "Foursquare",
                         "rating": place_data["rating"],
-                        "external_id": place_data["external_id"],
+                        "external_id": ext_id,
                     })
-
 
         if new_places:
             stmt = insert(Place).values(new_places).returning(Place.id, Place.external_id)
@@ -95,12 +103,10 @@ async def search_places_handler(
                 await db.execute(insert(Rating).values(rating_values))
 
         await db.commit()
-
-        return PlaceResponse(places=[PlaceSchema.model_validate(place) for place in places])
+        return PlaceResponse(places=[PlaceSchema.model_validate(p) for p in places])
 
     except SQLAlchemyError as e:
         await db.rollback()
         raise HTTPException(status_code=500, detail=f"Ошибка базы данных: {str(e)}")
-
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Непредвиденная ошибка: {str(e)}")
