@@ -12,7 +12,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from place_service.apis.foursquare_api import search_places, foursquare_category_id, parse_place_item, \
     prepare_new_ratings
 from place_service.database import async_session_maker
-from place_service.places.models import CategoryEnum, Place, PlaceSchema, PlaceResponse, Rating
+from place_service.places.models import CategoryEnum, Place, Rating
+from place_service.places.schemas import PlaceSchema, PlaceResponse
 from place_service.utils import get_local_places
 from settings import PLACE_SERVICE_PORT
 

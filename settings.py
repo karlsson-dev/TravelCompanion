@@ -5,6 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 PLACE_SERVICE_PORT=8000
 HOTEL_SERVICE_PORT=8001
 
+
 class Settings(BaseSettings):
     # place_service
     PLACE_DB_HOST: str
