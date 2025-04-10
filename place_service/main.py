@@ -2,6 +2,7 @@ from collections.abc import AsyncGenerator
 from datetime import datetime, timezone
 from typing import Optional
 
+import uvicorn
 from fastapi import Query, Depends, FastAPI, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -13,6 +14,7 @@ from place_service.apis.foursquare_api import search_places, foursquare_category
 from place_service.database import async_session_maker
 from place_service.places.models import CategoryEnum, Place, PlaceSchema, PlaceResponse, Rating
 from place_service.utils import get_local_places
+from settings import PLACE_SERVICE_PORT
 
 app = FastAPI()
 
@@ -109,3 +111,7 @@ async def search_places_handler(
         raise HTTPException(status_code=500, detail=f"Ошибка базы данных: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Непредвиденная ошибка: {str(e)}")
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=PLACE_SERVICE_PORT, reload=True)

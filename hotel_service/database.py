@@ -5,11 +5,11 @@ from sqlalchemy import func
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column
 
-from settings import get_place_db_url
+from settings import get_hotel_db_url
 
-DATABASE_URL = get_place_db_url()
+DATABASE = get_hotel_db_url()
 
-engine = create_async_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE)
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 # кастомные шаблоны для описания колонок в SQLAlchemy
