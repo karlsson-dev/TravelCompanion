@@ -7,9 +7,10 @@ from hotel_service.deps import get_hotel_repository, get_redis_service
 from hotel_service.repositories.hotel import HotelRepository
 from hotel_service.schemas.hotel import HotelSearchRequest, HotelListResponse
 from settings import HOTEL_SERVICE_PORT
-from hotel_service.utils.logger import setup_logger
+from hotel_service.utils.logger import logger
 
-setup_logger()
+logger.info("Приложение запущено")
+logger.debug("Это отладочное сообщение")
 
 
 @asynccontextmanager
@@ -24,7 +25,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/hotels", response_model=HotelListResponse)
+@app.get("/hotels", response_model=HotelListResponse, tags=["Поиск и рекомендация отелей"])
 async def get_hotels(
         query: HotelSearchRequest = Depends(),
         repo: HotelRepository = Depends(get_hotel_repository),

@@ -1,27 +1,17 @@
-from loguru import logger
+import logging
 import sys
-import os
+from loguru import logger
 
-
+# Настройка логирования через loguru для удобства
 def setup_logger():
-    log_path = "logs"
-    os.makedirs(log_path, exist_ok=True)
+    # Убираем стандартный обработчик loguru
+    logger.remove()
 
-    logger.remove()  # Убираем стандартный вывод
+    # Добавляем вывод в терминал
+    logger.add(sys.stdout, level="DEBUG", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
 
-    logger.add(
-        sys.stdout,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | <cyan>{module}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>",
-        level="INFO",
-        enqueue=True,
-    )
+    # Логируем в файл
+    logger.add("app.log", level="DEBUG", format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}", rotation="1 MB")
 
-    logger.add(
-        f"{log_path}/app.log",
-        rotation="10 MB",
-        retention="10 days",
-        level="INFO",
-        enqueue=True,
-        encoding="utf-8",
-        format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {module}:{function}:{line} - {message}",
-    )
+# Вызов настройки логирования
+setup_logger()

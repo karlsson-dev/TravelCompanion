@@ -1,17 +1,23 @@
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from enum import Enum
 
+from pydantic import BaseModel, Field, ConfigDict
+from typing import List, Optional
+
+class SortByEnum(str, Enum):
+    distance = "distance"
+    rating = "rating"
 
 class HotelSearchRequest(BaseModel):
     """
     Схема запроса на поиск отелей.
     """
-    name: str = Field(..., min_length=3, description="Текст для поиска в имени отеля (минимум 3 символа)")
-    radius: int = Field(..., gt=0, description="Радиус поиска в метрах")
-    lat: float = Field(..., description="Широта точки поиска")
-    lon: float = Field(..., description="Долгота точки поиска")
-    rate: int = Field(..., ge=1, le=3, description="Минимальный рейтинг известности (1 - мин, 3 - макс)")
-
+    name: str = Field(..., min_length=3, title="Имя отеля", description="Название отеля для поиска (минимум 3 символа)")
+    radius: int = Field(..., gt=0, title="Радиус", description="Радиус поиска в метрах")
+    lat: float = Field(..., title="Широта", description="Широта точки поиска")
+    lon: float = Field(..., title="Долгота", description="Долгота точки поиска")
+    rate: int = Field(..., ge=1, le=3, title="Рейтинг", description="Минимальный рейтинг отеля (от 1 до 3)")
+    sort_by: Optional[SortByEnum] = Field(None, title="Сортировка",
+                                          description="Параметр для сортировки результатов: по расстоянию или по рейтингу")
     model_config = ConfigDict(from_attributes=True)
 
 
