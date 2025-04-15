@@ -16,8 +16,8 @@ logger.debug("Это отладочное сообщение")
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     redis = get_redis_service()
-    await redis.connect()  # Подключаемся к Redis
-    yield  # Приложение работает
+    await redis.connect()
+    yield
     if redis.redis:
         await redis.redis.close()
 
@@ -34,5 +34,8 @@ async def get_hotels(
     return {"results": hotels}
 
 
+
+
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=HOTEL_SERVICE_PORT, reload=True)
+

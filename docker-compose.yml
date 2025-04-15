@@ -43,7 +43,7 @@ services:
   postgres_place:
     image: postgres:latest
     container_name: postgres_place
-    env_file: .env  # Подключаем переменные из .env
+    env_file: .env
     environment:
       POSTGRES_USER: ${PLACE_DB_USER}
       POSTGRES_PASSWORD: ${PLACE_DB_PASSWORD}
@@ -52,8 +52,8 @@ services:
     ports:
       - "5431:5432"
     volumes:
-      - pgdata_place:/var/lib/postgresql/data # Данные сохраняются здесь
+      - pgdata_place:/var/lib/postgresql/data
 
 
 volumes:
-  pgdata_place: # Том для PostgreSQL
+  pgdata_place:

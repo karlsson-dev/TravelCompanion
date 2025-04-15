@@ -12,10 +12,16 @@ from hotel_service.services.redis import RedisService
 
 
 class HotelRepository:
-    def __init__(self, api_key: str, redis: RedisService):
-        self.api_key = api_key
+    def __init__(
+        self,
+        redis: RedisService,
+        opentripmap_api_key: str,
+        opentripmap_url: str
+    ):
         self.redis = redis
-        self.base_url = "https://api.opentripmap.com/0.1"
+        self.opentripmap_api_key = opentripmap_api_key
+        self.opentripmap_url = opentripmap_url
+
 
     def _build_cache_key(self, params: dict) -> str:
         """
@@ -28,7 +34,7 @@ class HotelRepository:
         """
         Запрос к OpenTripMap API.
         """
-        url = f"{self.base_url}/ru/places/autosuggest"
+        url = f"{self.opentripmap_url}/ru/places/autosuggest"
         async with httpx.AsyncClient() as client:
             response = await client.get(url, params=params)
             response.raise_for_status()
@@ -43,7 +49,7 @@ class HotelRepository:
             "rate": query.rate,
             "kinds": "accomodations",
             "format": "json",
-            "apikey": self.api_key,
+            "apikey": self.opentripmap_api_key,
         }
 
         if query.sort_by:

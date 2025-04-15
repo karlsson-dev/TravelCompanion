@@ -3,7 +3,7 @@ from aioredis import Redis, from_url
 
 
 class RedisService:
-    def __init__(self, redis_url: str):
+    def __init__(self, redis_url):
         self.redis_url = redis_url
         self.redis: Optional[Redis] = None
 
@@ -21,7 +21,7 @@ class RedisService:
             raise ConnectionError("Redis не подключён")
         return await self.redis.get(key)
 
-    async def set(self, key: str, value: Union[str, dict], ttl: int = 5) -> None:
+    async def set(self, key: str, value: Union[str, dict], ttl: int = 3600) -> None:
         """
         Сохранить значение в Redis с TTL.
         """
@@ -40,3 +40,4 @@ class RedisService:
         """
         if self.redis:
             await self.redis.close()
+

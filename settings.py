@@ -5,6 +5,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 PLACE_SERVICE_PORT=8000
 HOTEL_SERVICE_PORT=8001
 
+PORT_MIN = 1
+PORT_MAX = 65535
 
 class Settings(BaseSettings):
     # place_service
@@ -15,8 +17,12 @@ class Settings(BaseSettings):
     PLACE_DB_PASSWORD: str
 
     # hotel_service
-    redis_url: str
-    opentripmap_api_key: str
+    REDIS_URL: str
+    REDIS_PASSWORD: str
+    REDIS_USER: str
+    REDIS_USER_PASSWORD: str
+    OPENTRIPMAP_API_KEY: str
+    OPENTRIPMAP_URL: str
 
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parent / ".env",
@@ -26,8 +32,9 @@ class Settings(BaseSettings):
     @field_validator("PLACE_DB_PORT", mode="before")
     @classmethod
     def validate_port(cls, port: int) -> int:
-        if not 1 <= int(port) <= 65535:
-            raise ValueError("DB_PORT должен быть между 1 и 65535")
+        if not PORT_MIN <= int(port) <= PORT_MAX:
+            raise ValueError(f"DB_PORT должен быть между {PORT_MIN} и {PORT_MAX}")
+
         return int(port)
 
     @field_validator("PLACE_DB_PASSWORD", mode="before")
