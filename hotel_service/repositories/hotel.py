@@ -9,36 +9,24 @@ from aioredis.exceptions import ConnectionError
 from hotel_service.models.hotels import Hotel
 from hotel_service.schemas.hotel import HotelSearchRequest
 from hotel_service.services.redis import RedisService
+from hotel_service.clients.opentripmap_client import OpenTripMapClient
 
 
 class HotelRepository:
     def __init__(
         self,
         redis: RedisService,
-        opentripmap_api_key: str,
-        opentripmap_url: str
+        opentripmap_client: OpenTripMapClient
     ):
         self.redis = redis
-        self.opentripmap_api_key = opentripmap_api_key
-        self.opentripmap_url = opentripmap_url
-
+        self.opentripmap_client = opentripmap_client
 
     def _build_cache_key(self, params: dict) -> str:
         """
-        Генерация кэш-ключа на основе параметров запроса.
+        Генерация кэш-ключа на основе параметров запроса
         """
         raw = json.dumps(params, sort_keys=True)
         return f"hotel:{hashlib.md5(raw.encode()).hexdigest()}"
-
-    async def _fetch_hotels_from_api(self, params: dict) -> list[dict]:
-        """
-        Запрос к OpenTripMap API.
-        """
-        url = f"{self.opentripmap_url}/ru/places/autosuggest"
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, params=params)
-            response.raise_for_status()
-            return response.json()
 
     async def search_hotels(self, query: HotelSearchRequest) -> List[Hotel]:
         params = {
@@ -49,7 +37,7 @@ class HotelRepository:
             "rate": query.rate,
             "kinds": "accomodations",
             "format": "json",
-            "apikey": self.opentripmap_api_key,
+            "apikey": self.opentripmap_client.api_key,
         }
 
         if query.sort_by:
@@ -58,6 +46,7 @@ class HotelRepository:
         cache_key = self._build_cache_key(params)
         data = None
 
+        # Попытка получить данные из кэша Redis
         try:
             cached = await self.redis.get(cache_key)
             if cached:
@@ -66,7 +55,7 @@ class HotelRepository:
             else:
                 logger.info("Запрос к OpenTripMap API...")
                 logger.debug(f"Параметры запроса: {params}")
-                data = await self._fetch_hotels_from_api(params)
+                data = await self.opentripmap_client.search_hotels(params)
 
                 # Сохраняем в Redis с TTL = 300 секунд (5 минут)
                 await self.redis.set(cache_key, json.dumps(data), ttl=300)
@@ -75,22 +64,12 @@ class HotelRepository:
             logger.warning(f"Redis недоступен: {e}")
         except Exception as e:
             logger.error(f"Ошибка при получении данных: {e}")
-            raise
+            return []  # Возвращаем пустой список в случае ошибки
 
-        hotels: List[Hotel] = []
+        # Преобразуем данные в список объектов Hotel
+        hotels = self.opentripmap_client.parse_hotels(data)
 
-        for item in data:
-            try:
-                hotels.append(Hotel(
-                    name=item.get("name", ""),
-                    dist=item.get("dist", 0.0),
-                    rate=item.get("rate", 0),
-                    lat=item["point"]["lat"],
-                    lon=item["point"]["lon"]
-                ))
-            except KeyError as e:
-                logger.warning(f"Пропущен элемент из-за ошибки ключа: {e}")
-
+        # Сортируем по выбранному параметру
         if query.sort_by == "distance":
             hotels.sort(key=lambda h: h.dist)
         elif query.sort_by == "rating":

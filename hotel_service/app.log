@@ -222,3 +222,19 @@
 2025-04-15 12:02:00 | INFO | Запрос к OpenTripMap API...
 2025-04-15 12:02:00 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 100000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.rating: 'rating'>}
 2025-04-15 12:02:00 | INFO | Данные сохранены в Redis.
+2025-04-15 14:27:24 | INFO | Приложение запущено
+2025-04-15 14:27:24 | DEBUG | Это отладочное сообщение
+2025-04-15 14:27:33 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:27:33 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 100000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.rating: 'rating'>}
+2025-04-15 14:27:33 | INFO | Данные сохранены в Redis.
+2025-04-15 14:27:39 | INFO | Кэш найден по ключу: hotel:c80c3058163b5ce8f445ea54dc1a0e97
+2025-04-15 14:27:47 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:27:47 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 100000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 14:27:48 | INFO | Данные сохранены в Redis.
+2025-04-15 14:27:59 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:27:59 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 1000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 3, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 14:28:00 | INFO | Данные сохранены в Redis.
+2025-04-15 14:28:00 | WARNING | Не удалось найти отели по данному запросу.
+2025-04-15 14:28:14 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:28:14 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 1000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 14:28:14 | INFO | Данные сохранены в Redis.

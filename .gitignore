@@ -16,7 +16,7 @@ __pycache__/
 *.db
 
 # Redis data
-*.redisdata
+redisdata/
 
 # If using PostgreSQL, ignore database dumps
 *.pg_dump
