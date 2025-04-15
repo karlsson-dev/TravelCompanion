@@ -1,4 +1,3 @@
-import httpx
 import hashlib
 import json
 from typing import List
@@ -57,14 +56,18 @@ class HotelRepository:
                 logger.debug(f"Параметры запроса: {params}")
                 data = await self.opentripmap_client.search_hotels(params)
 
-                # Сохраняем в Redis с TTL = 300 секунд (5 минут)
-                await self.redis.set(cache_key, json.dumps(data), ttl=300)
-                logger.info("Данные сохранены в Redis.")
+                try:
+                    await self.redis.set(cache_key, json.dumps(data), ttl=300)
+                except ConnectionError as e:
+                    logger.warning(f"Redis недоступен при сохранении: {e}")
+                except Exception as e:
+                    logger.error(f"Ошибка при сохранении ключа {cache_key} в Redis: {e}")
         except ConnectionError as e:
-            logger.warning(f"Redis недоступен: {e}")
+            logger.warning(f"Redis недоступен при получении: {e}")
         except Exception as e:
             logger.error(f"Ошибка при получении данных: {e}")
-            return []  # Возвращаем пустой список в случае ошибки
+            # Возвращаем пустой список в случае ошибки
+            return []
 
         # Преобразуем данные в список объектов Hotel
         hotels = self.opentripmap_client.parse_hotels(data)

@@ -1,14 +1,8 @@
 from fastapi import Depends, Request
-from functools import lru_cache
 from services.redis import RedisService
 from repositories.hotel import HotelRepository
 from settings import settings
 from clients.opentripmap_client import OpenTripMapClient
-
-
-# @lru_cache
-# def get_redis_service() -> RedisService:
-#     return RedisService(redis_url=settings.REDIS_URL)
 
 
 async def get_redis(request: Request):

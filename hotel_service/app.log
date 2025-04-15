@@ -249,3 +249,158 @@
 2025-04-15 14:46:30 | INFO | Данные сохранены в Redis.
 2025-04-15 14:46:34 | INFO | Кэш найден по ключу: hotel:795031d009c39dcaf6a07dd519473cf4
 2025-04-15 14:46:38 | INFO | Соединение с Redis закрыто.
+2025-04-15 14:48:50 | INFO | Приложение запущено
+2025-04-15 14:48:50 | DEBUG | Это отладочное сообщение
+2025-04-15 14:48:50 | INFO | Соединение с Redis установлено.
+2025-04-15 14:48:56 | ERROR | Ошибка при получении ключа hotel:795031d009c39dcaf6a07dd519473cf4 из Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:48:56 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:48:56 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 14:48:56 | ERROR | Ошибка при сохранении ключа hotel:795031d009c39dcaf6a07dd519473cf4 в Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:48:56 | INFO | Данные сохранены в Redis.
+2025-04-15 14:49:11 | ERROR | Ошибка при получении ключа hotel:795031d009c39dcaf6a07dd519473cf4 из Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:49:11 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:49:11 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 14:49:12 | ERROR | Ошибка при сохранении ключа hotel:795031d009c39dcaf6a07dd519473cf4 в Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:49:12 | INFO | Данные сохранены в Redis.
+2025-04-15 14:49:55 | INFO | Соединение с Redis закрыто.
+2025-04-15 14:53:35 | INFO | Приложение запущено
+2025-04-15 14:53:35 | DEBUG | Это отладочное сообщение
+2025-04-15 14:53:35 | INFO | Соединение с Redis установлено.
+2025-04-15 14:53:47 | ERROR | Ошибка при получении ключа hotel:795031d009c39dcaf6a07dd519473cf4 из Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:53:47 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:53:47 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 14:53:47 | ERROR | Ошибка при сохранении ключа hotel:795031d009c39dcaf6a07dd519473cf4 в Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:53:47 | INFO | Данные сохранены в Redis по ключу: hotel:795031d009c39dcaf6a07dd519473cf4
+2025-04-15 14:56:34 | INFO | Соединение с Redis закрыто.
+2025-04-15 14:56:35 | INFO | Приложение запущено
+2025-04-15 14:56:35 | DEBUG | Это отладочное сообщение
+2025-04-15 14:56:35 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:56:40 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 14:56:40 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:56:40 | ERROR | Ошибка при получении ключа hotel:795031d009c39dcaf6a07dd519473cf4 из Redis: Не удалось подключиться к Redis.
+2025-04-15 14:56:40 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:56:40 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 14:56:40 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 14:56:40 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:56:40 | ERROR | Ошибка при сохранении ключа hotel:795031d009c39dcaf6a07dd519473cf4 в Redis: Не удалось подключиться к Redis.
+2025-04-15 14:56:40 | INFO | Данные сохранены в Redis по ключу: hotel:795031d009c39dcaf6a07dd519473cf4
+2025-04-15 14:58:09 | INFO | Приложение запущено
+2025-04-15 14:58:09 | DEBUG | Это отладочное сообщение
+2025-04-15 14:58:09 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:58:12 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 14:58:12 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:58:12 | ERROR | Ошибка при получении ключа hotel:795031d009c39dcaf6a07dd519473cf4 из Redis: Не удалось подключиться к Redis.
+2025-04-15 14:58:12 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:58:12 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 14:58:12 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 14:58:12 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:58:12 | ERROR | Ошибка при сохранении ключа hotel:795031d009c39dcaf6a07dd519473cf4 в Redis: Не удалось подключиться к Redis.
+2025-04-15 14:58:12 | INFO | Данные сохранены в Redis по ключу: hotel:795031d009c39dcaf6a07dd519473cf4
+2025-04-15 14:59:19 | INFO | Приложение запущено
+2025-04-15 14:59:19 | DEBUG | Это отладочное сообщение
+2025-04-15 14:59:19 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:59:24 | INFO | Приложение запущено
+2025-04-15 14:59:24 | DEBUG | Это отладочное сообщение
+2025-04-15 14:59:24 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:59:32 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 14:59:32 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:59:32 | ERROR | Ошибка при получении ключа hotel:dca633c39bcc1905f61f90e9c95695af из Redis: Не удалось подключиться к Redis.
+2025-04-15 14:59:32 | INFO | Запрос к OpenTripMap API...
+2025-04-15 14:59:32 | DEBUG | Параметры запроса: {'name': 'гостиница', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.rating: 'rating'>}
+2025-04-15 14:59:32 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 14:59:32 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 14:59:32 | ERROR | Ошибка при сохранении ключа hotel:dca633c39bcc1905f61f90e9c95695af в Redis: Не удалось подключиться к Redis.
+2025-04-15 14:59:32 | INFO | Данные сохранены в Redis по ключу: hotel:dca633c39bcc1905f61f90e9c95695af
+2025-04-15 15:12:45 | INFO | Приложение запущено
+2025-04-15 15:12:45 | DEBUG | Это отладочное сообщение
+2025-04-15 15:12:45 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:14:16 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:14:16 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:14:16 | ERROR | Ошибка при получении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 из Redis: Не удалось подключиться к Redis.
+2025-04-15 15:14:16 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:14:16 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44'}
+2025-04-15 15:14:16 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:14:16 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:14:16 | ERROR | Ошибка при сохранении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 в Redis: Не удалось подключиться к Redis.
+2025-04-15 15:14:16 | INFO | Данные сохранены в Redis по ключу: hotel:42e2e85d073e860d71df7d949c29a4b7
+2025-04-15 15:17:01 | INFO | Приложение запущено
+2025-04-15 15:17:01 | DEBUG | Это отладочное сообщение
+2025-04-15 15:17:01 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:17:07 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:17:07 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:17:07 | ERROR | Ошибка при получении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 из Redis: Не удалось подключиться к Redis.
+2025-04-15 15:17:07 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:17:07 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44'}
+2025-04-15 15:17:08 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:17:08 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:17:08 | ERROR | Ошибка при сохранении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 в Redis: Не удалось подключиться к Redis.
+2025-04-15 15:17:08 | INFO | Данные сохранены в Redis по ключу: hotel:42e2e85d073e860d71df7d949c29a4b7
+2025-04-15 15:17:53 | INFO | Приложение запущено
+2025-04-15 15:17:53 | DEBUG | Это отладочное сообщение
+2025-04-15 15:17:53 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:20:07 | INFO | Приложение запущено
+2025-04-15 15:20:07 | DEBUG | Это отладочное сообщение
+2025-04-15 15:20:07 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:20:11 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:20:11 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:20:11 | ERROR | Ошибка при получении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 из Redis: Не удалось подключиться к Redis.
+2025-04-15 15:20:11 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:20:11 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44'}
+2025-04-15 15:20:11 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:20:11 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:20:11 | ERROR | Ошибка при сохранении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 в Redis: Не удалось подключиться к Redis.
+2025-04-15 15:20:11 | INFO | Данные сохранены в Redis по ключу: hotel:42e2e85d073e860d71df7d949c29a4b7
+2025-04-15 15:21:00 | INFO | Приложение запущено
+2025-04-15 15:21:00 | DEBUG | Это отладочное сообщение
+2025-04-15 15:21:00 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:03 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:21:03 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:03 | ERROR | Ошибка при получении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 из Redis: Не удалось подключиться к Redis.
+2025-04-15 15:21:03 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:21:03 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44'}
+2025-04-15 15:21:03 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:21:03 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:03 | ERROR | Ошибка при сохранении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 в Redis: Не удалось подключиться к Redis.
+2025-04-15 15:21:03 | INFO | Данные сохранены в Redis по ключу: hotel:42e2e85d073e860d71df7d949c29a4b7
+2025-04-15 15:21:28 | INFO | Приложение запущено
+2025-04-15 15:21:28 | DEBUG | Это отладочное сообщение
+2025-04-15 15:21:28 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:30 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:21:30 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:30 | ERROR | Ошибка при получении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 из Redis: Не удалось подключиться к Redis.
+2025-04-15 15:21:30 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:21:30 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44'}
+2025-04-15 15:21:31 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:21:31 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:31 | ERROR | Ошибка при сохранении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 в Redis: Не удалось подключиться к Redis.
+2025-04-15 15:21:31 | INFO | Данные сохранены в Redis по ключу: hotel:42e2e85d073e860d71df7d949c29a4b7
+2025-04-15 15:21:52 | INFO | Приложение запущено
+2025-04-15 15:21:52 | DEBUG | Это отладочное сообщение
+2025-04-15 15:21:52 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:55 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:21:55 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:55 | ERROR | Ошибка при получении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 из Redis: Не удалось подключиться к Redis.
+2025-04-15 15:21:55 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:21:55 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44'}
+2025-04-15 15:21:56 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:21:56 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:21:56 | ERROR | Ошибка при сохранении ключа hotel:42e2e85d073e860d71df7d949c29a4b7 в Redis: Не удалось подключиться к Redis.
+2025-04-15 15:22:03 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:22:03 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:22:03 | ERROR | Ошибка при получении ключа hotel:670d7aa3550966be9bc0c220d382ea5d из Redis: Не удалось подключиться к Redis.
+2025-04-15 15:22:03 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:22:03 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 15:22:03 | WARNING | Redis не подключён. Попытка автоподключения...
+2025-04-15 15:22:03 | ERROR | Ошибка подключения к Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:22:03 | ERROR | Ошибка при сохранении ключа hotel:670d7aa3550966be9bc0c220d382ea5d в Redis: Не удалось подключиться к Redis.
+2025-04-15 15:22:17 | INFO | Приложение запущено
+2025-04-15 15:22:17 | DEBUG | Это отладочное сообщение
+2025-04-15 15:22:17 | INFO | Соединение с Redis установлено.
+2025-04-15 15:22:20 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:22:20 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 15:22:49 | INFO | Кэш найден по ключу: hotel:670d7aa3550966be9bc0c220d382ea5d
+2025-04-15 15:23:06 | ERROR | Ошибка при получении ключа hotel:670d7aa3550966be9bc0c220d382ea5d из Redis: Connection closed by server.
+2025-04-15 15:23:06 | INFO | Запрос к OpenTripMap API...
+2025-04-15 15:23:06 | DEBUG | Параметры запроса: {'name': 'хостел', 'radius': 10000, 'lat': 55.7522, 'lon': 37.6156, 'rate': 2, 'kinds': 'accomodations', 'format': 'json', 'apikey': '5ae2e3f221c38a28845f05b61726374a7919abf7bff262c8b4eb0f44', 'sort_by': <SortByEnum.distance: 'distance'>}
+2025-04-15 15:23:07 | ERROR | Ошибка при сохранении ключа hotel:670d7aa3550966be9bc0c220d382ea5d в Redis: Error connecting to localhost:6379. Multiple exceptions: [Errno 61] Connect call failed ('::1', 6379, 0, 0), [Errno 61] Connect call failed ('127.0.0.1', 6379).
+2025-04-15 15:23:12 | INFO | Соединение с Redis закрыто.

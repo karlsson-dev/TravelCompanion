@@ -15,6 +15,7 @@ class RedisService:
         """
         try:
             self.redis = await from_url(self.redis_url, decode_responses=True)
+            await self.redis.ping()
             logger.info("Соединение с Redis установлено.")
         except Exception as e:
             logger.error(f"Ошибка подключения к Redis: {e}")
