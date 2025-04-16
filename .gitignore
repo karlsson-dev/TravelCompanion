@@ -1,8 +1,8 @@
 /tests/
 
 # Alembic
-/alembic.ini
-/place_service/migration/
+*/alembic.ini
+*/migration/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -14,7 +14,9 @@ __pycache__/
 
 # Database files
 *.db
-place_service/places.db
+
+# Redis data
+redisdata/
 
 # If using PostgreSQL, ignore database dumps
 *.pg_dump
