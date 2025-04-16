@@ -18,6 +18,10 @@ __pycache__/
 # Redis data
 redisdata/
 
+# log files
+logs/
+*.log
+
 # If using PostgreSQL, ignore database dumps
 *.pg_dump
 
