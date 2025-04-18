@@ -1,7 +1,7 @@
 from fastapi import Depends, Request
 from services.redis import RedisService
 from repositories.hotel import HotelRepository
-from settings import settings
+from app.core.config import settings
 from clients.opentripmap_client import OpenTripMapClient
 
 

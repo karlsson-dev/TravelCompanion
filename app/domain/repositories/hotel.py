@@ -5,10 +5,10 @@ from typing import List
 from loguru import logger
 from aioredis.exceptions import ConnectionError
 
-from hotel_service.models.hotels import Hotel
-from hotel_service.schemas.hotel import HotelSearchRequest
-from hotel_service.services.redis import RedisService
-from hotel_service.clients.opentripmap_client import OpenTripMapClient
+from app import Hotel
+from app.api.schemas.hotel import HotelSearchRequest
+from app.infrastructure.cache.redis_service import RedisService
+from app.infrastructure.external.opentripmap_client import OpenTripMapClient
 
 
 class HotelRepository:

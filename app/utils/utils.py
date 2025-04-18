@@ -2,7 +2,7 @@ import math
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, and_
-from place_service.places.models import Place, Rating
+from app import Place, Rating
 
 
 def get_bounding_box(lat: float, lon: float, radius_meters: int):

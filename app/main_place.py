@@ -9,13 +9,13 @@ from sqlalchemy.future import select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.exc import SQLAlchemyError
 
-from place_service.apis.foursquare_api import search_places, foursquare_category_id, parse_place_item, \
+from app.infrastructure.external.foursquare_client import search_places, foursquare_category_id, parse_place_item, \
     prepare_new_ratings
-from place_service.database import async_session_maker
-from place_service.places.models import CategoryEnum, Place, Rating
-from place_service.places.schemas import PlaceSchema, PlaceResponse
-from place_service.utils import get_local_places
-from settings import PLACE_SERVICE_PORT
+from app.infrastructure.database.base import async_session_maker
+from app.infrastructure.database.models.place import CategoryEnum, Place, Rating
+from app.api.schemas.place import PlaceSchema, PlaceResponse
+from app.utils.utils import get_local_places
+from app.core.config import PLACE_SERVICE_PORT
 
 app = FastAPI()
 

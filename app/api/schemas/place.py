@@ -1,6 +1,6 @@
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict, model_validator
-from place_service.places.models import CategoryEnum
+from app import CategoryEnum
 
 RATING_RANGES = {
     "Foursquare": (0, 10),
@@ -28,13 +28,6 @@ class RatingSchema(BaseModel):
     id: Optional[int] = None
     source: str
     rating: float
-
-    @model_validator(mode='before')
-    def validate_rating_range(cls, values):
-        source = values.get('source')
-        rating = values.get('rating')
-
-        # Проверка диапазонов для каждого источника
 
     @model_validator(mode='before')
     def validate_rating_range(cls, values):
