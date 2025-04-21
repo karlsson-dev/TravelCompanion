@@ -1,6 +1,6 @@
 from typing import Optional, List
 from pydantic import BaseModel, ConfigDict, model_validator
-from app import CategoryEnum
+from infrastructure.database.models.place import CategoryEnum
 
 RATING_RANGES = {
     "Foursquare": (0, 10),

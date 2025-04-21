@@ -1,12 +1,15 @@
 from pathlib import Path
 from pydantic import field_validator, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
+from fastapi.security import OAuth2PasswordBearer
 
-PLACE_SERVICE_PORT=8000
-HOTEL_SERVICE_PORT=8001
+SERVICE_PORT = 8000
 
 PORT_MIN = 1
 PORT_MAX = 65535
+
+ALGORITHM = "HS256"
+
 
 class Settings(BaseSettings):
     # place_service
@@ -24,8 +27,13 @@ class Settings(BaseSettings):
     OPENTRIPMAP_API_KEY: str
     OPENTRIPMAP_URL: str
 
+    # auth
+    SECRET_KEY: str
+    ALGORITHM: str
+    ACCESS_TOKEN_EXPIRE_MINUTES: int
+
     model_config = SettingsConfigDict(
-        env_file=Path(__file__).resolve().parent / ".env",
+        env_file=Path(__file__).resolve().parent.parent.parent / ".env",
         extra="ignore",
     )
 
@@ -54,6 +62,8 @@ class Settings(BaseSettings):
             raise ValueError("DB_HOST должно быть действительным именем хоста или IP")
         return host
 
+# глобально определяем схему авторизации
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 try:
     settings = Settings()
@@ -65,4 +75,3 @@ def get_place_db_url() -> str:
     return (
         f"postgresql+asyncpg://{settings.PLACE_DB_USER}:{settings.PLACE_DB_PASSWORD}@"
         f"{settings.PLACE_DB_HOST}:{settings.PLACE_DB_PORT}/{settings.PLACE_DB_NAME}")
-

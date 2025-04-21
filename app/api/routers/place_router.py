@@ -1,52 +1,48 @@
-from collections.abc import AsyncGenerator
+from fastapi import APIRouter, Query, Depends, HTTPException
 from datetime import datetime, timezone
 from typing import Optional
-
-import uvicorn
-from fastapi import Query, Depends, FastAPI, HTTPException
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.exc import SQLAlchemyError
+from api.schemas import PlaceSchema, PlaceResponse
 
-from app.infrastructure.external.foursquare_client import search_places, foursquare_category_id, parse_place_item, \
-    prepare_new_ratings
-from app.infrastructure.database.base import async_session_maker
-from app.infrastructure.database.models.place import CategoryEnum, Place, Rating
-from app.api.schemas.place import PlaceSchema, PlaceResponse
-from app.utils.utils import get_local_places
-from app.core.config import PLACE_SERVICE_PORT
+from infrastructure.external import FourSquareClient, NominatimClient
+from infrastructure.database.models import CategoryEnum, Place, Rating, User
+from utils.utils import get_local_places
+from core.dependencies import get_db, get_current_user
+from domain.repositories import TripRepository
 
-app = FastAPI()
+router = APIRouter(
+    prefix="/search",
+    tags=["Поиск мест"],
+    dependencies=[Depends(get_current_user)]  # авторизация для всех маршрутов
+)
 
-
-async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        try:
-            yield session
-        except SQLAlchemyError as e:
-            await session.rollback()
-            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-        finally:
-            await session.close()
-
-
-@app.get("/search", response_model=PlaceResponse)
+@router.get("/", summary="Получить места")
 async def search_places_handler(
         category: CategoryEnum = Query(..., description="Категория мест"),
         latitude: float = Query(..., description="Широта"),
         longitude: float = Query(..., description="Долгота"),
         radius: int = Query(1000, description="Радиус поиска в метрах"),
         min_rating: Optional[float] = Query(None, description="Минимальный рейтинг (0-10)"),
-        db: AsyncSession = Depends(get_db)
+        db: AsyncSession = Depends(get_db),
+        current_user: User = Depends(get_current_user)  # Получаем текущего пользователя
 ):
-    category_id = foursquare_category_id(category)
+    category_id = FourSquareClient.foursquare_category_id(category)
     if not category_id:
         raise HTTPException(status_code=400, detail="Неверная категория для поиска")
 
     try:
+        # Получаем данные мест из базы данных
         local_places = await get_local_places(db, latitude, longitude, radius, category.value, min_rating)
         if local_places:
+            # Сохраняем информацию о поездке в таблице trips
+            repo = TripRepository(db)
+            destination = await NominatimClient.reverse_geocode(latitude, longitude)
+            await repo.save_trip(current_user.id, destination,
+                                 category.value)
+
             return PlaceResponse(places=[PlaceSchema.model_validate(p) for p in local_places])
 
         # Если не нашли — обращаемся к внешнему API
@@ -56,7 +52,7 @@ async def search_places_handler(
             "categories": category_id,
             "limit": 10
         }
-        data = await search_places(params=params)
+        data = await FourSquareClient.search_places(params=params)
         results = data.get("results", [])
         if not results:
             return PlaceResponse(places=[])
@@ -70,7 +66,7 @@ async def search_places_handler(
         ratings_buffer = []
 
         for item in results:
-            place_data = parse_place_item(item, min_rating)
+            place_data = FourSquareClient.parse_place_item(item, min_rating)
             if not place_data:
                 continue
 
@@ -100,11 +96,18 @@ async def search_places_handler(
                 place["id"] = inserted_places.get(place["external_id"])
                 places.append(Place(**place))
 
-            rating_values = prepare_new_ratings(ratings_buffer, inserted_places)
+            rating_values = FourSquareClient.prepare_new_ratings(ratings_buffer, inserted_places)
             if rating_values:
                 await db.execute(insert(Rating).values(rating_values))
 
         await db.commit()
+
+        # После сохранения мест в базе данных, сохраняем поездку
+        repo = TripRepository(db)
+        destination = await NominatimClient.reverse_geocode(latitude, longitude)
+        await repo.save_trip(current_user.id, destination,
+                             category.value)
+
         return PlaceResponse(places=[PlaceSchema.model_validate(p) for p in places])
 
     except SQLAlchemyError as e:
@@ -112,7 +115,3 @@ async def search_places_handler(
         raise HTTPException(status_code=500, detail=f"Ошибка базы данных: {str(e)}")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Непредвиденная ошибка: {str(e)}")
-
-
-if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", port=PLACE_SERVICE_PORT, reload=True)

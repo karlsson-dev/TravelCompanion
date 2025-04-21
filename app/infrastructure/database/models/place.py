@@ -4,7 +4,7 @@ from typing import List
 from sqlalchemy import ForeignKey, Text, String, Numeric, Index
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
-from app.infrastructure.database.base import Base, int_pk, str_null_true
+from ..base import Base, int_pk, str_null_true
 
 
 class CategoryEnum(str, Enum):

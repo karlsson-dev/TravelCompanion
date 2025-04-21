@@ -5,17 +5,17 @@ from typing import List
 from loguru import logger
 from aioredis.exceptions import ConnectionError
 
-from app import Hotel
-from app.api.schemas.hotel import HotelSearchRequest
-from app.infrastructure.cache.redis_service import RedisService
-from app.infrastructure.external.opentripmap_client import OpenTripMapClient
+from domain.dto.hotel_dto import Hotel
+from api.schemas.hotel import HotelSearchRequest
+from infrastructure.cache.redis_service import RedisService
+from infrastructure.external.opentripmap_client import OpenTripMapClient
 
 
 class HotelRepository:
     def __init__(
-        self,
-        redis: RedisService,
-        opentripmap_client: OpenTripMapClient
+            self,
+            redis: RedisService,
+            opentripmap_client: OpenTripMapClient
     ):
         self.redis = redis
         self.opentripmap_client = opentripmap_client

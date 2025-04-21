@@ -1,7 +1,7 @@
 import httpx
 from typing import List
 from loguru import logger
-from app import Hotel
+from domain.dto.hotel_dto import Hotel
 
 class OpenTripMapClient:
     def __init__(self, api_key: str, base_url: str):
