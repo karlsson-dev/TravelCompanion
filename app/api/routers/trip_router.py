@@ -18,5 +18,14 @@ async def list_user_trips(
         db: AsyncSession = Depends(get_db),
         user: User = Depends(get_current_user)
 ):
+    """
+    Получить список поездок пользователя.
+
+    :param db: Сессия для работы с базой данных.
+    :param user: Текущий авторизованный пользователь, чьи поездки будут получены.
+
+    :return: Список поездок пользователя в виде объектов TripResponse.
+    :raises HTTPException: В случае ошибок при запросе поездок пользователя из базы данных.
+    """
     repo = TripRepository(db)
     return await repo.get_user_trips(user.id)

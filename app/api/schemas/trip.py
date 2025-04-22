@@ -12,7 +12,7 @@ class TripResponse(BaseModel):
     id: int
     destination: str
     category: Optional[str]
-    timestamp: datetime
+    created_at: datetime
 
     model_config = {
         "from_attributes": True

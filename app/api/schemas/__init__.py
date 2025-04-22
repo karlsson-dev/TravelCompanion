@@ -3,3 +3,4 @@ from .place import PlaceSchema, PlaceResponse, RatingSchema, RecommendationRespo
 from .user import UserResponse, UserCreate
 from .trip import TripResponse, TripCreate
 from .visit import VisitCreate, VisitResponse
+from .auth import TokenResponse

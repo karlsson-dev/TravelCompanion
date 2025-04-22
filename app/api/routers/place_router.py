@@ -31,6 +31,20 @@ async def search_places_handler(
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)  # Получаем текущего пользователя
 ):
+    """
+    Поиск мест по заданной категории, координатам, радиусу и минимальному рейтингу.
+
+    :param category: Категория мест (например, рестораны, магазины).
+    :param latitude: Широта для поиска мест.
+    :param longitude: Долгота для поиска мест.
+    :param radius: Радиус поиска в метрах.
+    :param min_rating: Минимальный рейтинг для мест (по умолчанию нет фильтрации по рейтингу).
+    :param db: Сессия для работы с базой данных.
+    :param current_user: Текущий авторизованный пользователь, чьи предпочтения могут быть использованы для поиска.
+
+    :return: Список мест, соответствующих запросу.
+    :raises HTTPException: В случае некорректной категории для поиска или других ошибок.
+    """
     category_id = foursquare_category_id(category)
     if not category_id:
         raise HTTPException(status_code=400, detail="Неверная категория для поиска")
