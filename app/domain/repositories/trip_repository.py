@@ -21,6 +21,6 @@ class TripRepository:
             raise HTTPException(status_code=500, detail=f"Ошибка базы данных при сохранении поездки: {str(e)}")
 
     async def get_user_trips(self, user_id: int):
-        stmt = select(Trip).where(Trip.user_id == user_id).order_by(Trip.timestamp.desc())
+        stmt = select(Trip).where(Trip.user_id == user_id).order_by(Trip.created_at.desc())
         result = await self.db.execute(stmt)
         return result.scalars().all()

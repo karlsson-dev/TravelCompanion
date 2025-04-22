@@ -1,3 +1,2 @@
 from .opentripmap_client import OpenTripMapClient
-from .foursquare_client import FourSquareClient
 from .nominatim_client import NominatimClient

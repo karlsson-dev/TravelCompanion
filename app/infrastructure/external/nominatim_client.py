@@ -1,8 +1,11 @@
 import httpx
 
 class NominatimClient:
-    async def reverse_geocode(lat: float, lon: float) -> str:
-        url = "https://nominatim.openstreetmap.org/reverse"
+    def __init__(self, base_url: str):
+        self.base_url = base_url
+
+    async def reverse_geocode(self, lat: float, lon: float) -> str:
+        url = f"{self.base_url}/reverse"
         params = {
             "format": "json",
             "lat": lat,

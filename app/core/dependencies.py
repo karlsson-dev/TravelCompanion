@@ -1,18 +1,16 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-
 from fastapi import Depends, Request, HTTPException, status
-
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from sqlalchemy.exc import SQLAlchemyError
+from jose import JWTError, jwt
 
 from infrastructure.cache.redis_service import RedisService
 from domain.repositories import HotelRepository
-from infrastructure.external import OpenTripMapClient
+from infrastructure.external import OpenTripMapClient, NominatimClient
 from infrastructure.database.base import async_session_maker
-from sqlalchemy.exc import SQLAlchemyError
-from jose import JWTError, jwt
 from infrastructure.database.models import User
-from sqlalchemy import select
 
 from .config import settings, oauth2_scheme
 
@@ -30,19 +28,16 @@ async def get_opentripmap_client():
     try:
         yield client
     finally:
-        await client.close()
+        pass
 
 
 @asynccontextmanager
-async def get_nominatim_client():
-    client = OpenTripMapClient(
-        api_key=settings.OPENTRIPMAP_API_KEY,
-        base_url=settings.OPENTRIPMAP_URL
+async def get_nominatim_client() -> NominatimClient:
+    client = NominatimClient(
+        base_url=settings.NOMINATIM_URL
     )
-    try:
-        yield client
-    finally:
-        await client.close()
+    yield client
+
 
 
 async def get_hotel_repository(

@@ -7,7 +7,7 @@ from core.dependencies import get_db
 from jose import jwt
 from datetime import timedelta, datetime
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["Атентификация пользователей"])
 
 SECRET_KEY = settings.SECRET_KEY
 ALGORITHM = settings.ALGORITHM

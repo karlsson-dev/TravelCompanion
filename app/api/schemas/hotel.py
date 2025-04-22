@@ -1,11 +1,12 @@
 from enum import Enum
-
 from pydantic import BaseModel, Field, ConfigDict
 from typing import List, Optional
+
 
 class SortByEnum(str, Enum):
     distance = "distance"
     rating = "rating"
+
 
 class HotelSearchRequest(BaseModel):
     """

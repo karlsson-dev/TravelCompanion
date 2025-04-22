@@ -7,7 +7,7 @@ RATING_RANGES = {
     "2GIS": (1, 5),
 }
 
-# Pydantic-модель для Place (DTO)
+
 class PlaceSchema(BaseModel):
     id: Optional[int] = None
     name: str
@@ -44,3 +44,7 @@ class RatingSchema(BaseModel):
             )
 
         return values
+
+
+class RecommendationResponse(BaseModel):
+    results: List[PlaceSchema]

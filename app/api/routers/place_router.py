@@ -6,16 +6,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.dialects.postgresql import insert
 from api.schemas import PlaceSchema, PlaceResponse
-
-from infrastructure.external import FourSquareClient, NominatimClient
 from infrastructure.database.models import CategoryEnum, Place, Rating, User
 from utils.utils import get_local_places
-from core.dependencies import get_db, get_current_user
+from core.dependencies import get_db, get_current_user, get_nominatim_client
 from domain.repositories import TripRepository
+from infrastructure.external.foursquare_client import (search_places,
+                                                       parse_place_item,
+                                                       foursquare_category_id,
+                                                       prepare_new_ratings)
 
 router = APIRouter(
     prefix="/search",
-    tags=["Поиск мест"],
+    tags=["Поиск и рекомендация мест"],
     dependencies=[Depends(get_current_user)]  # авторизация для всех маршрутов
 )
 
@@ -29,7 +31,7 @@ async def search_places_handler(
         db: AsyncSession = Depends(get_db),
         current_user: User = Depends(get_current_user)  # Получаем текущего пользователя
 ):
-    category_id = FourSquareClient.foursquare_category_id(category)
+    category_id = foursquare_category_id(category)
     if not category_id:
         raise HTTPException(status_code=400, detail="Неверная категория для поиска")
 
@@ -38,8 +40,10 @@ async def search_places_handler(
         local_places = await get_local_places(db, latitude, longitude, radius, category.value, min_rating)
         if local_places:
             # Сохраняем информацию о поездке в таблице trips
+            async with get_nominatim_client() as client:
+                destination = await client.reverse_geocode(latitude, longitude)
+
             repo = TripRepository(db)
-            destination = await NominatimClient.reverse_geocode(latitude, longitude)
             await repo.save_trip(current_user.id, destination,
                                  category.value)
 
@@ -52,7 +56,7 @@ async def search_places_handler(
             "categories": category_id,
             "limit": 10
         }
-        data = await FourSquareClient.search_places(params=params)
+        data = await search_places(params=params)
         results = data.get("results", [])
         if not results:
             return PlaceResponse(places=[])
@@ -66,7 +70,7 @@ async def search_places_handler(
         ratings_buffer = []
 
         for item in results:
-            place_data = FourSquareClient.parse_place_item(item, min_rating)
+            place_data = parse_place_item(item, min_rating)
             if not place_data:
                 continue
 
@@ -96,15 +100,17 @@ async def search_places_handler(
                 place["id"] = inserted_places.get(place["external_id"])
                 places.append(Place(**place))
 
-            rating_values = FourSquareClient.prepare_new_ratings(ratings_buffer, inserted_places)
+            rating_values = prepare_new_ratings(ratings_buffer, inserted_places)
             if rating_values:
                 await db.execute(insert(Rating).values(rating_values))
 
         await db.commit()
 
         # После сохранения мест в базе данных, сохраняем поездку
+        async with get_nominatim_client() as client:
+            destination = await client.reverse_geocode(latitude, longitude)
+
         repo = TripRepository(db)
-        destination = await NominatimClient.reverse_geocode(latitude, longitude)
         await repo.save_trip(current_user.id, destination,
                              category.value)
 

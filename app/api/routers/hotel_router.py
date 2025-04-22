@@ -11,7 +11,7 @@ from api.schemas import HotelSearchRequest
 
 router = APIRouter (
     prefix="/hotels",
-    tags=["Поиск отелей"],
+    tags=["Поиск и рекомендация отелей"],
     dependencies=[Depends(get_hotel_repository)], # авторизация для всех маршрутов
 )
 

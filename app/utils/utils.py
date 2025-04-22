@@ -19,12 +19,12 @@ def get_bounding_box(lat: float, lon: float, radius_meters: int):
 
 
 async def get_local_places(
-    db: AsyncSession,
-    latitude: float,
-    longitude: float,
-    radius: int,
-    category: str,
-    min_rating: Optional[float] = None
+        db: AsyncSession,
+        latitude: float,
+        longitude: float,
+        radius: int,
+        category: str,
+        min_rating: Optional[float] = None
 ) -> List[Place]:
     lat_min, lat_max, lon_min, lon_max = get_bounding_box(latitude, longitude, radius)
 

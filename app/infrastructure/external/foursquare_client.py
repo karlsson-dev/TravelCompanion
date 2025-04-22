@@ -39,107 +39,104 @@ CONNECTION_LIMITS = httpx.Limits(
     max_keepalive_connections=20  # Долгоживущие соединения
 )
 
-class FourSquareClient:
-    def foursquare_category_id(category):
-        """Возвращает ID категории Foursquare API для данного значения"""
-        return _CODE_MAPPING[category]
+async def search_places(params: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Поиск мест через Foursquare API с обработкой ошибок и таймаутом
+    """
+    if not all([FOURSQUARE_API_KEY, FOURSQUARE_INTEGRATION_URL]):
+        logger.error("Не настроены обязательные переменные окружения для Foursquare API")
+        raise HTTPException(
+            status_code=500,
+            detail="Service configuration error"
+        )
 
+    timeout = Timeout(**PRODUCTION_TIMEOUTS)
 
-    async def search_places(params: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Поиск мест через Foursquare API с обработкой ошибок и таймаутом
-        """
-        if not all([FOURSQUARE_API_KEY, FOURSQUARE_INTEGRATION_URL]):
-            logger.error("Не настроены обязательные переменные окружения для Foursquare API")
+    async with httpx.AsyncClient(
+            timeout=timeout,
+            limits=CONNECTION_LIMITS,
+            transport=httpx.AsyncHTTPTransport(retries=2)  # 2 попытки ретрая
+    ) as client:
+        try:
+            # Запрос с отдельным таймаутом для поиска (меньше чем read timeout)
+            response = await client.get(
+                FOURSQUARE_INTEGRATION_URL,
+                headers=HEADERS,
+                params=params,
+                timeout=Timeout(8.0)
+            )# Специфичный таймаут для этого API
+
+            response.raise_for_status()
+            return response.json()
+
+        except httpx.ConnectTimeout:
+            logger.error("Таймаут при запросе к Foursquare API")
             raise HTTPException(
-                status_code=500,
-                detail="Service configuration error"
+                status_code=504,
+                detail="Could not connect to Foursquare API"
             )
 
-        timeout = Timeout(**PRODUCTION_TIMEOUTS)
+        except httpx.ReadTimeout:
+            logger.error("Ошибка на чтение ответа Foursquare API")
+            raise HTTPException(
+                status_code=504,
+                detail="Foursquare API response timeout"
+            )
 
-        async with httpx.AsyncClient(
-                timeout=timeout,
-                limits=CONNECTION_LIMITS,
-                transport=httpx.AsyncHTTPTransport(retries=2)  # 2 попытки ретрая
-        ) as client:
-            try:
-                # Запрос с отдельным таймаутом для поиска (меньше чем read timeout)
-                response = await client.get(
-                    FOURSQUARE_INTEGRATION_URL,
-                    headers=HEADERS,
-                    params=params,
-                    timeout=Timeout(8.0)
-                )# Специфичный таймаут для этого API
+        except httpx.HTTPStatusError as e:
+            logger.error(f"Ошибка Foursquare API: {e.response.status_code}")
+            raise HTTPException(
+                status_code=502,
+                detail=f"Foursquare API error: {e.response.text[:200]}..."
+            )
 
-                response.raise_for_status()
-                return response.json()
+        except httpx.RequestError as e:
+            logger.error(f"Ошибка запроса к Foursquare API: {str(e)}")
+            raise HTTPException(
+                status_code=503,
+                detail="Service temporarily unavailable"
+            )
 
-            except httpx.ConnectTimeout:
-                logger.error("Таймаут при запросе к Foursquare API")
-                raise HTTPException(
-                    status_code=504,
-                    detail="Could not connect to Foursquare API"
-                )
+        except Exception as e:
+            logger.error(f"Неожиданный запрос: {str(e)}", exc_info=True)
+            raise HTTPException(
+                status_code=500,
+                detail="Internal server error"
+            )
 
-            except httpx.ReadTimeout:
-                logger.error("Ошибка на чтение ответа Foursquare API")
-                raise HTTPException(
-                    status_code=504,
-                    detail="Foursquare API response timeout"
-                )
+def foursquare_category_id(category: str) -> Optional[str]:
+    """Возвращает ID категории Foursquare API для данного значения"""
+    return _CODE_MAPPING[category]
 
-            except httpx.HTTPStatusError as e:
-                logger.error(f"Ошибка Foursquare API: {e.response.status_code}")
-                raise HTTPException(
-                    status_code=502,
-                    detail=f"Foursquare API error: {e.response.text[:200]}..."
-                )
+def parse_place_item(item: Dict[str, Any], min_rating: Optional[float]) -> Optional[Dict[str, Any]]:
+    """Извлечь данные о месте, если оно соответствует требованиям"""
+    external_id = item.get("fsq_id")
+    name = item.get("name")
+    geocode = item.get("geocodes", {}).get("main", {})
+    address = item.get("location", {}).get("formatted_address", "")
+    rating = item.get("rating")
 
-            except httpx.RequestError as e:
-                logger.error(f"Ошибка запроса к Foursquare API: {str(e)}")
-                raise HTTPException(
-                    status_code=503,
-                    detail="Service temporarily unavailable"
-                )
+    if not (external_id and name and geocode):
+        return None
 
-            except Exception as e:
-                logger.error(f"Неожиданный запрос: {str(e)}", exc_info=True)
-                raise HTTPException(
-                    status_code=500,
-                    detail="Internal server error"
-                )
+    if min_rating is not None and (rating is None or rating < min_rating):
+        return None
 
-    def parse_place_item(item: Dict[str, Any], min_rating: Optional[float]) -> Optional[Dict[str, Any]]:
-        """Извлечь данные о месте, если оно соответствует требованиям"""
-        external_id = item.get("fsq_id")
-        name = item.get("name")
-        geocode = item.get("geocodes", {}).get("main", {})
-        address = item.get("location", {}).get("formatted_address", "")
-        rating = item.get("rating")
+    return {
+        "external_id": external_id,
+        "name": name,
+        "latitude": geocode.get("latitude"),
+        "longitude": geocode.get("longitude"),
+        "address": address
+    }
 
-        if not (external_id and name and geocode):
-            return None
-
-        if min_rating is not None and (rating is None or rating < min_rating):
-            return None
-
-        return {
-            "external_id": external_id,
-            "name": name,
-            "latitude": geocode.get("latitude"),
-            "longitude": geocode.get("longitude"),
-            "address": address
+def prepare_new_ratings(ratings_buffer, inserted_places) -> list[Dict[str, Any]]:
+    """Подготовить список новых рейтингов, соответствующих вставленным местам"""
+    return [
+        {
+            "source": r["source"],
+            "rating": r["rating"],
+            "place_id": inserted_places[r["external_id"]],
         }
-
-
-    def prepare_new_ratings(ratings_buffer, inserted_places) -> list[Dict[str, Any]]:
-        """Подготовить список новых рейтингов, соответствующих вставленным местам"""
-        return [
-            {
-                "source": r["source"],
-                "rating": r["rating"],
-                "place_id": inserted_places[r["external_id"]],
-            }
-            for r in ratings_buffer if r["external_id"] in inserted_places
-        ]
+        for r in ratings_buffer if r["external_id"] in inserted_places
+    ]

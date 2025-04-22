@@ -32,6 +32,8 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
 
+    NOMINATIM_URL: str
+
     model_config = SettingsConfigDict(
         env_file=Path(__file__).resolve().parent.parent.parent / ".env",
         extra="ignore",
@@ -62,7 +64,7 @@ class Settings(BaseSettings):
             raise ValueError("DB_HOST должно быть действительным именем хоста или IP")
         return host
 
-# глобально определяем схему авторизации
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 try:
