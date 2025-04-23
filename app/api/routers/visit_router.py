@@ -15,7 +15,6 @@ router = APIRouter(prefix="/visits", tags=["История посещений"])
 @router.post(
     "/",
     response_model=VisitResponse,
-    dependencies=[Depends(get_current_user)]
 )
 async def create_visit(
         visit: VisitCreate,
@@ -41,7 +40,6 @@ async def create_visit(
 @router.post(
     "/visited/",
     summary="История посещений",
-    dependencies=[Depends(get_current_user)]
 )
 async def save_visited_place(
         place: RecommendationResponse,

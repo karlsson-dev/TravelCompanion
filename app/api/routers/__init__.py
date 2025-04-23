@@ -5,3 +5,4 @@ from .recommendation_router import router as recommendation_router
 from .trip_router import router as trip_router
 from .user_router import router as user_router
 from .visit_router import router as visit_router
+from .review_router import router as review_router

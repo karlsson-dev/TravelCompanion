@@ -9,7 +9,6 @@ from typing import List
 router = APIRouter(
     prefix="/trips",
     tags=["Поездки"],
-    dependencies=[Depends(get_db), Depends(get_current_user)]  # авторизация для всех маршрутов
 )
 
 

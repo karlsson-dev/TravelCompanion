@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 import time
 
 from loguru import logger
@@ -6,11 +6,11 @@ from loguru import logger
 from core.dependencies import get_hotel_repository, get_current_user
 from domain.repositories import HotelRepository
 from api.schemas import HotelSearchRequest
+from infrastructure.database.models import User
 
 router = APIRouter(
     prefix="/hotels",
     tags=["Поиск и рекомендация отелей"],
-    dependencies=[Depends(get_current_user)],  # авторизация для всех маршрутов
 )
 
 
@@ -18,16 +18,21 @@ router = APIRouter(
 async def get_hotels(
         query: HotelSearchRequest = Depends(),
         repo: HotelRepository = Depends(get_hotel_repository),
+        user: User = Depends(get_current_user),
 ):
     """
     Получить список отелей, соответствующих поисковому запросу.
 
     :param query: Параметры поиска отелей (категория, местоположение, рейтинг и т.д.).
     :param repo: Репозиторий отелей, отвечающий за взаимодействие с базой данных или внешними сервисами.
+    :param user: обёртка-заглушка для мока OAUTH2.
 
     :return: Список отелей, удовлетворяющих запросу.
     :raises HTTPException: Если произошла ошибка при получении данных отелей, возвращается код ошибки 503 (Сервис недоступен).
     """
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
+
     start = time.perf_counter()
     try:
         hotels = await repo.search_hotels(query)

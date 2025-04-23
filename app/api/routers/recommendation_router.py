@@ -7,7 +7,6 @@ from api.schemas import RecommendationResponse
 router = APIRouter(
     prefix="/recommendations",
     tags=["Персонализированные рекомендации мест"],
-    dependencies=[Depends(get_current_user)]
 )
 
 

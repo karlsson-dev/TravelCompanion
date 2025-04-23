@@ -6,7 +6,6 @@ from infrastructure.database.models import User
 router = APIRouter(
     prefix="/users",
     tags=["Пользователи"],
-    dependencies=[Depends(get_current_user)]  # авторизация для всех маршрутов
 )
 
 

@@ -18,7 +18,6 @@ from infrastructure.external.foursquare_client import (search_places,
 router = APIRouter(
     prefix="/search",
     tags=["Поиск и рекомендация мест"],
-    dependencies=[Depends(get_current_user)]  # авторизация для всех маршрутов
 )
 
 @router.get("/", summary="Получить места")

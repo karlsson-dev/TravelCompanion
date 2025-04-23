@@ -4,6 +4,7 @@ from typing import List
 from sqlalchemy import ForeignKey, Text, String, Numeric, Index
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
+from .user_place_review import UserPlaceReview
 from ..base import Base, int_pk, str_null_true
 
 
@@ -25,6 +26,7 @@ class Place(Base):
     external_id: Mapped[str_null_true]  # ID из внешнего API
     ratings: Mapped[List["Rating"]] = relationship("Rating", back_populates="place")
     reviews: Mapped[List["Review"]] = relationship("Review", back_populates="place")
+    user_reviews: Mapped[List["UserPlaceReview"]] = relationship("UserPlaceReview", back_populates="place")
 
     __table_args__ = (
         Index("idx_latitude", "latitude"),
@@ -54,7 +56,7 @@ class Rating(Base):
                 f"source={self.source!r}, "
                 f"rating={self.rating!r})")
 
-
+# отзывы из внешнего API
 class Review(Base):
     id: Mapped[int_pk]
     source: Mapped[str] = mapped_column(String(50), unique=False)  # Название API (Foursquare, 2GIS и т. д.)

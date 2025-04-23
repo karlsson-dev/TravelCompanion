@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from jose import JWTError, jwt
 
 from infrastructure.cache.redis_service import RedisService
-from domain.repositories import HotelRepository
+from domain.repositories import HotelRepository, ReviewRepository
 from infrastructure.external import OpenTripMapClient, NominatimClient
 from infrastructure.database.base import async_session_maker
 from infrastructure.database.models import User
