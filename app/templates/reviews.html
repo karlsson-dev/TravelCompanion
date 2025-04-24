@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы</title>
+    <link href="/static/css/styles.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-4xl mx-auto my-10 p-6 bg-white rounded-lg shadow-lg">
+
+        <!-- Кнопка для перехода на главную страницу -->
+        <div class="mb-6">
+            <a href="/api/reviews/" class="block text-center px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">Главная страница</a>
+        </div>
+
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Отзывы о местах</h1>
+
+        <!-- Если отзывы есть, отображаем их -->
+        {% if reviews %}
+            <ul class="space-y-4">
+            {% for review in reviews %}
+                <li class="border-b pb-4">
+                    <strong>Место:</strong> {{ review.place_name }}<br>
+                    <strong>Оценка:</strong> {{ review.rating }}<br>
+                    <strong>Отзыв:</strong> {{ review.content }}<br>
+                    <hr class="my-4">
+                </li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Отзывов пока нет.</p>
+        {% endif %}
+
+        <br>
+        <a href="/api/reviews/create" class="block text-center px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Добавить новый отзыв</a>
+    </div>
+</body>
+</html>

@@ -9,6 +9,8 @@ class ReviewCreate(BaseModel):
     content: str = Field(..., description="Текст отзыва", min_length=5, max_length=1000)
     rating: int = Field(..., description="Оценка (1-5)", ge=1, le=5)
 
+    class Config:
+        from_attributes = True
 
 class ReviewResponse(BaseModel):
     id: int = Field(..., description="ID отзыва")

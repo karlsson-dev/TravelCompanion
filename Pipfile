@@ -23,6 +23,8 @@ aioredis = "==2.0.1"
 email-validator = "*"
 alembic = "*"
 bcrypt = "==3.2.0"
+jinja2 = "*"
+python-multipart = "*"
 
 [dev-packages]
 pytest = "==8.3.5"

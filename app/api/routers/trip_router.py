@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=List[TripResponse])
+@router.get("/", response_model=List[TripResponse], summary="Получить список поездок пользователя")
 async def list_user_trips(
         db: AsyncSession = Depends(get_db),
         user: User = Depends(get_current_user)
