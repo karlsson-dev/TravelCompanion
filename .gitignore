@@ -1,8 +1,9 @@
 /tests/
 
 # Alembic
-*/alembic.ini
-*/migration/
+alembic.ini
+/alembic/
+/migrations/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

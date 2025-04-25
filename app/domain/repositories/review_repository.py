@@ -1,10 +1,11 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, delete, update
+from sqlalchemy import select, delete
 from sqlalchemy.exc import SQLAlchemyError
 from fastapi import HTTPException
 
 from app.api.schemas.review import ReviewCreate
 from app.infrastructure.database.models.user_place_review import UserPlaceReview
+from infrastructure.database.models import User
 
 
 class ReviewRepository:
@@ -26,17 +27,26 @@ class ReviewRepository:
         result = await self.db.execute(select(UserPlaceReview))
         return result.scalars().all()
 
-    async def update_review(self, review_id: int, content: str, rating: int):
+    async def update_review(self, review_id: int, content: str, rating: int, user: User):
         try:
-            stmt = (
-                update(UserPlaceReview)
-                .where(UserPlaceReview.id == review_id)
-                .values(content=content, rating=rating)
-                .execution_options(synchronize_session="fetch")
+            result = await self.db.execute(
+                select(UserPlaceReview).where(
+                    UserPlaceReview.id == review_id,
+                    UserPlaceReview.user_id == user.id
+                )
             )
-            await self.db.execute(stmt)
+            review = result.scalar_one_or_none()
+            if not review:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Отзыв с указанным ID не найден или не принадлежит текущему пользователю."
+                )
+
+            review.content = content
+            review.rating = rating
             await self.db.commit()
-            return await self.get_review_by_id(review_id)
+            return review
+
         except SQLAlchemyError as e:
             await self.db.rollback()
             raise HTTPException(status_code=500, detail=f"Ошибка при обновлении отзыва: {str(e)}")
@@ -49,11 +59,15 @@ class ReviewRepository:
             await self.db.rollback()
             raise HTTPException(status_code=500, detail=f"Ошибка при удалении отзыва: {str(e)}")
 
-    async def get_review_by_id(self, review_id: int):
+
+    async def get_review_by_id(self, review_id: int, user: User):
         result = await self.db.execute(
-            select(UserPlaceReview).where(UserPlaceReview.id == review_id)
+            select(UserPlaceReview).where(UserPlaceReview.id == review_id and UserPlaceReview.user_id == user.id)
         )
         review = result.scalar_one_or_none()
         if not review:
-            raise HTTPException(status_code=404, detail="Отзыв не найден")
+            raise HTTPException(
+                status_code=404,
+                detail="Отзыв с указанным ID не найден или не принадлежит текущему пользователю."
+            )
         return review

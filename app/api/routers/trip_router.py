@@ -24,7 +24,8 @@ async def list_user_trips(
     :param user: Текущий авторизованный пользователь, чьи поездки будут получены.
 
     :return: Список поездок пользователя в виде объектов TripResponse.
-    :raises HTTPException: В случае ошибок при запросе поездок пользователя из базы данных.
+    :raises HTTPException 401: Если пользователь не авторизован.
+    :raises HTTPException 500: В случае ошибок при запросе поездок пользователя из базы данных.
     """
     repo = TripRepository(db)
     return await repo.get_user_trips(user.id)

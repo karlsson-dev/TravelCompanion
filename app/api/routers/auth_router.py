@@ -36,7 +36,7 @@ async def register(user: UserCreate, db: AsyncSession = Depends(get_db)):
     :param user: Объект с данными нового пользователя.
     :param db: Асинхронная сессия базы данных.
     :return: Данные созданного пользователя.
-    :raises HTTPException: Если пользователь с таким email или именем уже существует.
+    :raises HTTPException 400: Если пользователь с таким email или именем уже существует.
     """
     repo = UserRepository(db)
     existing_email = await repo.get_by_email(user.email)
@@ -57,7 +57,7 @@ async def login(user: UserCreate, db: AsyncSession = Depends(get_db)):
     :param user: Объект с данными пользователя для входа.
     :param db: Асинхронная сессия базы данных.
     :return: Словарь с токеном доступа и типом токена.
-    :raises HTTPException: Если имя пользователя или пароль неверны.
+    :raises HTTPException 401: Если имя пользователя или пароль неверны.
     """
     repo = UserRepository(db)
     db_user = await repo.get_by_username(user.username)

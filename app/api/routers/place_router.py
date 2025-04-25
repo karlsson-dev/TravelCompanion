@@ -40,9 +40,10 @@ async def search_places_handler(
     :param min_rating: Минимальный рейтинг для мест (по умолчанию нет фильтрации по рейтингу).
     :param db: Сессия для работы с базой данных.
     :param current_user: Текущий авторизованный пользователь, чьи предпочтения могут быть использованы для поиска.
-
     :return: Список мест, соответствующих запросу.
-    :raises HTTPException: В случае некорректной категории для поиска или других ошибок.
+    :raises HTTPException 400: В случае некорректной категории для поиска.
+    :raises HTTPException 401: Если пользователь не авторизован.
+    :raises HTTPException 500: В случае ошибок при работе с базой данных или внешними сервисами.
     """
     category_id = foursquare_category_id(category)
     if not category_id:

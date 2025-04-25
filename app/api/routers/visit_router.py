@@ -49,12 +49,16 @@ async def save_visited_place(
 ):
     """
     Сохранить информацию о посещенном месте.
+
     Записывает информацию о месте, которое пользователь отметил как посещенное.
+
     :param place: Объект RecommendationResponse с данными о месте, которое было посещено.
     :param session: Объект базы данных (Session).
     :param user: Текущий авторизованный пользователь.
+
     :return: Сообщение о успешной записи.
-    :raises HTTPException: В случае ошибки при сохранении информации о посещенном месте.
+    :raises HTTPException 401: Если пользователь не авторизован.
+    :raises HTTPException 400: Если произошла ошибка при сохранении информации о посещенном месте.
     """
     engine = RecommendationEngine(session)
     try:
