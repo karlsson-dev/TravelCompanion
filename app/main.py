@@ -3,13 +3,15 @@ import time
 import uvicorn
 from starlette.middleware.base import BaseHTTPMiddleware
 
+from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
+
+from core.dependencies import get_current_user
 from infrastructure.cache.redis_service import RedisService
 from core.logger import logger
-
-from fastapi import FastAPI, Request
-
 from core.config import settings, SERVICE_PORT
 from api.routers import *
+from infrastructure.database.models import User
 
 logger.info("Приложение запущено")
 logger.debug("Это отладочное сообщение")
@@ -52,6 +54,16 @@ app = FastAPI(
 
 app.add_middleware(LoggingMiddleware)
 
+# Мокаем авторизацию
+if settings.USE_FAKE_AUTH:
+    async def fake_get_current_user() -> User:
+        return User(id=1, username="devuser", email="dev@example.com")
+
+
+    app.dependency_overrides[get_current_user] = fake_get_current_user
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 app.include_router(auth_router)
 app.include_router(hotel_router)
 app.include_router(place_router)
@@ -59,6 +71,7 @@ app.include_router(recommendation_router)
 app.include_router(trip_router)
 app.include_router(user_router)
 app.include_router(visit_router)
+app.include_router(review_router)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=SERVICE_PORT, reload=True)

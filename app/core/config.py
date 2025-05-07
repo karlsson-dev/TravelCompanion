@@ -28,9 +28,11 @@ class Settings(BaseSettings):
     OPENTRIPMAP_URL: str
 
     # auth
+    USE_FAKE_AUTH: bool = False
     SECRET_KEY: str
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
+    REFRESH_TOKEN_EXPIRE_DAYS: int
 
     NOMINATIM_URL: str
 

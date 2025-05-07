@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <script>
+        // Функция для редиректа на страницу редактирования отзыва
+        function redirectToEditReview() {
+            const reviewId = document.getElementById("review_id_edit").value; // Получаем значение ID отзыва для редактирования
+            if (reviewId) {
+                // Формируем URL и выполняем редирект
+                window.location.href = `/api/reviews/${reviewId}/edit`;
+            } else {
+                alert("Пожалуйста, введите ID отзыва для редактирования.");
+            }
+        }
+
+        // Функция для редиректа на страницу удаления отзыва
+        function redirectToDeleteReview() {
+            const reviewId = document.getElementById("review_id_delete").value; // Получаем значение ID отзыва для удаления
+            if (reviewId) {
+                // Формируем URL и выполняем редирект
+                window.location.href = `/api/reviews/${reviewId}/delete`;
+            } else {
+                alert("Пожалуйста, введите ID отзыва для удаления.");
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div class="max-w-4xl mx-auto my-10 p-6 bg-white rounded-lg shadow-lg">
+    <!-- Навигация -->
+    <div class="flex justify-between mb-6">
+        <a href="/api/reviews/" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">
+            <i class="fas fa-home mr-2"></i>Главная
+        </a>
+        <a href="/api/reviews/create" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <i class="fas fa-plus mr-2"></i>Добавить отзыв
+        </a>
+        <a href="/api/reviews/reviews" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <i class="fas fa-plus mr-2"></i>Показать все отзывы
+        </a>
+
+    </div>
+
+      <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Меню</h1>
+
+        <!-- Форма для редактирования отзыва -->
+        <div class="mb-6">
+            <label for="review_id_edit" class="block text-lg font-medium text-gray-700">Введите ID отзыва для редактирования:</label>
+            <input type="number" id="review_id_edit" name="review_id_edit" class="w-full p-3 mt-2 mb-4 border border-gray-300 rounded-md" required min="1" />
+            <button type="button" onclick="redirectToEditReview()" class="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">Перейти к редактированию</button>
+        </div>
+
+        <!-- Форма для удаления отзыва -->
+        <div class="mb-6">
+            <label for="review_id_delete" class="block text-lg font-medium text-gray-700">Введите ID отзыва для удаления:</label>
+            <input type="number" id="review_id_delete" name="review_id_delete" class="w-full p-3 mt-2 mb-4 border border-gray-300 rounded-md" required min="1" />
+            <button type="button" onclick="redirectToDeleteReview()" class="px-6 py-3 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400">Перейти к удалению</button>
+        </div>
+
+    </div>
+
+</body>
+</html>

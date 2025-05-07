@@ -7,7 +7,6 @@ from api.schemas import RecommendationResponse
 router = APIRouter(
     prefix="/recommendations",
     tags=["Персонализированные рекомендации мест"],
-    dependencies=[Depends(get_current_user)]
 )
 
 
@@ -31,7 +30,8 @@ async def get_recommendations(
     :param user: Текущий авторизованный пользователь, чьи предпочтения будут использованы для генерации рекомендаций.
 
     :return: Список рекомендованных мест, основанных на истории и предпочтениях пользователя.
-    :raises HTTPException: В случае возникновения ошибок при генерации рекомендаций.
+    :raises HTTPException 401: Если пользователь не авторизован.
+    :raises HTTPException 500: В случае возникновения ошибок при генерации рекомендаций.
     """
     engine = RecommendationEngine(session)
     results = await engine.recommend(user_id=user.id, latitude=latitude, longitude=longitude)

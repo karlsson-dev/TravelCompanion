@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отзывы</title>
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="max-w-4xl mx-auto my-10 p-6 bg-white rounded-lg shadow-lg">
+
+        <!-- Навигация -->
+        <div class="flex justify-between mb-6">
+            <a href="/api/reviews/" class="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400">
+                <i class="fas fa-home mr-2"></i>Главная
+            </a>
+            <a href="/api/reviews/create" class="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <i class="fas fa-plus mr-2"></i>Добавить отзыв
+            </a>
+        </div>
+
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Отзывы о местах</h1>
+
+        <!-- Если отзывы есть, отображаем их -->
+        {% if reviews %}
+            <ul class="space-y-6">
+            {% for review in reviews %}
+                <li class="p-4 bg-gray-50 rounded-lg shadow-sm">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="text-xl font-semibold text-gray-800">{{ review.place_name }}</h2>
+                            <div class="flex items-center mt-1">
+                                {% for i in range(1, 6) %}
+                                    <i class="fas fa-star {{ 'text-yellow-400' if i <= review.rating else 'text-gray-300' }}"></i>
+                                {% endfor %}
+                                <span class="ml-2 text-gray-600">{{ review.rating }}/5</span>
+                            </div>
+                        </div>
+                        <span class="text-sm text-gray-500">{{ review.created_at.strftime('%d.%m.%Y %H:%M') if review.created_at else '' }}</span>
+                    </div>
+                    <p class="mt-3 text-gray-700">{{ review.content }}</p>
+                    {% if review.author %}
+                        <p class="mt-2 text-sm text-gray-500">Автор: {{ review.author.username }}</p>
+                    {% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+
+            <!-- Пагинация -->
+            {% if pagination.total_pages > 1 %}
+                <div class="flex justify-center mt-8 space-x-2">
+                    {% if pagination.page > 1 %}
+                        <a href="/api/reviews/?page={{ pagination.page-1 }}&per_page={{ pagination.per_page }}"
+                           class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
+                            <i class="fas fa-chevron-left"></i>
+                        </a>
+                    {% endif %}
+
+                    {% for p in range(1, pagination.total_pages + 1) %}
+                        {% if p == pagination.page %}
+                            <span class="px-4 py-2 bg-blue-500 text-white rounded-lg">{{ p }}</span>
+                        {% else %}
+                            <a href="/api/reviews/?page={{ p }}&per_page={{ pagination.per_page }}"
+                               class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">{{ p }}</a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pagination.page < pagination.total_pages %}
+                        <a href="/api/reviews/?page={{ pagination.page+1 }}&per_page={{ pagination.per_page }}"
+                           class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300">
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    {% endif %}
+                </div>
+                <div class="text-center mt-4 text-gray-600">
+                    Показано {{ (pagination.page - 1) * pagination.per_page + 1 }} -
+                    {{ [pagination.page * pagination.per_page, pagination.total_reviews]|min }}
+                    из {{ pagination.total_reviews }} отзывов
+                </div>
+            {% endif %}
+
+        {% else %}
+            <div class="text-center py-8">
+                <i class="fas fa-comment-slash text-4xl text-gray-300 mb-4"></i>
+                <p class="text-xl text-gray-600">Отзывов пока нет</p>
+                <p class="text-gray-500 mt-2">Будьте первым, кто оставит отзыв!</p>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
