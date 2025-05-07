@@ -58,17 +58,51 @@ async def post_create_review(
     await repo.create_review(review_data)
     return RedirectResponse(url="/api/reviews", status_code=status.HTTP_303_SEE_OTHER)
 
-@router.get("/reviews", response_class=HTMLResponse, summary="Отображает все отзывы в веб")
-async def get_reviews(request: Request, db: AsyncSession = Depends(get_db)):
+
+from fastapi import Request, Query
+
+
+@router.get("/reviews", response_class=HTMLResponse, summary="Отображает отзывы с пагинацией")
+async def get_reviews(
+        request: Request,
+        db: AsyncSession = Depends(get_db),
+        page: int = Query(1, description="Номер страницы", gt=0),
+        per_page: int = Query(20, description="Количество отзывов на странице", le=100)
+):
     """
-    Отображает все отзывы.
-    :param request: Объект запроса для использования в шаблонах.
-    :param db: Сессия базы данных для работы с отзывами.
-    :return: HTML-страница с отображением всех отзывов.
+    Отображает отзывы с постраничной навигацией.
+
+    :param request: Объект запроса для использования в шаблонах
+    :param db: Сессия базы данных для работы с отзывами
+    :param page: Номер страницы (начиная с 1)
+    :param per_page: Количество отзывов на странице (максимум 100)
+    :return: HTML-страница с отображением отзывов
     """
     repo = ReviewRepository(db)
-    reviews = await repo.get_all_reviews()
-    return templates.TemplateResponse("reviews.html", {"request": request, "reviews": reviews})
+
+    # Получаем отзывы с пагинацией
+    reviews = await repo.get_all_reviews(
+        limit=per_page,
+        offset=(page - 1) * per_page
+    )
+
+    # Получаем общее количество отзывов для пагинации
+    total_reviews = await repo.get_reviews_count()
+    total_pages = (total_reviews + per_page - 1) // per_page
+
+    return templates.TemplateResponse(
+        "reviews.html",
+        {
+            "request": request,
+            "reviews": reviews,
+            "pagination": {
+                "page": page,
+                "per_page": per_page,
+                "total_pages": total_pages,
+                "total_reviews": total_reviews
+            }
+        }
+    )
 
 @router.get(
     "/{review_id}/edit",
@@ -124,7 +158,11 @@ async def post_edit_review(
     await repo.update_review(review_id, content, rating, user)
     return RedirectResponse(url="/api/reviews/reviews", status_code=status.HTTP_303_SEE_OTHER)
 
-@router.get("/{review_id}/delete", response_class=HTMLResponse, summary="Отображает форму для подтверждения удаления отзыва в веб")
+@router.get(
+    "/{review_id}/delete",
+    response_class=HTMLResponse,
+    summary="Отображает форму для подтверждения удаления отзыва в веб"
+)
 async def get_delete_review_form(
         request: Request,
         review_id: int,

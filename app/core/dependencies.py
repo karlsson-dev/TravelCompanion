@@ -7,7 +7,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from jose import JWTError, jwt
 
 from infrastructure.cache.redis_service import RedisService
-from domain.repositories import HotelRepository, ReviewRepository
+from domain.repositories import HotelRepository
 from infrastructure.external import OpenTripMapClient, NominatimClient
 from infrastructure.database.base import async_session_maker
 from infrastructure.database.models import User
@@ -65,6 +65,9 @@ async def get_current_user(
         token: str = Depends(oauth2_scheme),
         db: AsyncSession = Depends(get_db)
 ) -> User:
+    """
+    Получение текущего авторизованного пользователя по токену.
+    """
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
